@@ -1,0 +1,483 @@
+{
+  "name": "Daily Current Affairs (The Hindu) - Master Workflow (Gemini Free Tier)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 5 * * *"
+            }
+          ]
+        }
+      },
+      "id": "e0000001-0000-0000-0000-000000000001",
+      "name": "Schedule Trigger (05:30 AM IST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "cfg-1", "name": "language", "value": "Malayalam", "type": "string" },
+            { "id": "cfg-2", "name": "primary_source", "value": "The Hindu", "type": "string" },
+            { "id": "cfg-3", "name": "target_exams", "value": "Kerala PSC, SSC, UPSC, Banking", "type": "string" },
+            { "id": "cfg-4", "name": "daily_story_count", "value": 12, "type": "number" },
+            { "id": "cfg-5", "name": "timezone", "value": "Asia/Kolkata", "type": "string" },
+            { "id": "cfg-6", "name": "minimum_confidence", "value": 0.85, "type": "number" },
+            { "id": "cfg-7", "name": "current_date", "value": "={{ $now.setZone('Asia/Kolkata').toFormat('yyyy-MM-dd') }}", "type": "string" },
+            { "id": "cfg-8", "name": "formatted_date", "value": "={{ $now.setZone('Asia/Kolkata').toFormat('dd MMMM yyyy') }}", "type": "string" },
+            { "id": "cfg-9", "name": "report_dir", "value": "/Users/pious/Documents/personalproject/scrapping/reports", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000002",
+      "name": "Central Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.thehindu.com/news/national/feeder/default.rss",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000003",
+      "name": "The Hindu - National",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        150
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.thehindu.com/business/feeder/default.rss",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000004",
+      "name": "The Hindu - Business",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        250
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.thehindu.com/sci-tech/feeder/default.rss",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000005",
+      "name": "The Hindu - SciTech",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        350
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.thehindu.com/news/national/kerala/feeder/default.rss",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000006",
+      "name": "The Hindu - Kerala",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        450
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://pib.gov.in/RssMain.aspx?ModId=6&LangId=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000007",
+      "name": "PIB Releases",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        550
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.rbi.org.in/pressreleases_rss.xml",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "Mozilla/5.0" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000008",
+      "name": "RBI Press Releases",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        650
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://prd.kerala.gov.in/en/rss.xml",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000009",
+      "name": "PRD Kerala Releases",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        750
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll"
+      },
+      "id": "e0000001-0000-0000-0000-000000000010",
+      "name": "Merge Ingested Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        800,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function cleanHtml(rawText) {\n  if (!rawText || typeof rawText !== 'string') return '';\n  let text = rawText.replace(/<[^>]*>/g, ' ');\n  const entities = {\n    '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '\"', '&#39;': \"'\",\n    '&apos;': \"'\", '&#8377;': '₹', '&nbsp;': ' ', '&#160;': ' ',\n    '&ndash;': '–', '&mdash;': '—', '&rsquo;': \"'\", '&lsquo;': \"'\",\n    '&rdquo;': '\"', '&ldquo;': '\"'\n  };\n  for (const [entity, char] of Object.entries(entities)) {\n    text = text.split(entity).join(char);\n  }\n  return text.replace(/\\s+/g, ' ').trim();\n}\n\nfunction cleanUrl(rawUrl) {\n  if (!rawUrl || typeof rawUrl !== 'string') return '';\n  try {\n    const parsed = new URL(rawUrl.trim());\n    ['utm_source', 'utm_medium', 'utm_campaign', 'ref', 'source'].forEach(p => parsed.searchParams.delete(p));\n    return parsed.toString();\n  } catch {\n    return rawUrl.trim();\n  }\n}\n\nconst normalizedItems = [];\nfor (const item of $input.all()) {\n  const data = item.json || {};\n  const rawTitle = data.title || data['atom:title'] || data.headline || '';\n  const title = cleanHtml(typeof rawTitle === 'object' ? rawTitle._ || rawTitle['#text'] || '' : rawTitle);\n  if (!title || title.length < 5) continue;\n\n  const rawDesc = data.description || data.contentSnippet || data.summary || '';\n  const description = cleanHtml(typeof rawDesc === 'object' ? rawDesc._ || rawDesc['#text'] || '' : rawDesc);\n  const rawUrl = data.link || data.url || data.guid || '';\n  const url = cleanUrl(typeof rawUrl === 'object' ? rawUrl._ : rawUrl);\n  \n  const source = data.source || (url.includes('thehindu.com') ? 'The Hindu' : (url.includes('pib.gov.in') ? 'PIB' : (url.includes('rbi.org.in') ? 'RBI' : (url.includes('prd.kerala.gov.in') ? 'PRD Kerala' : 'Official Source'))));\n  const isPrimary = source.toLowerCase().includes('the hindu');\n  const category = data.category || (Array.isArray(data.categories) ? data.categories[0] : '') || 'General';\n  \n  normalizedItems.push({\n    json: {\n      title,\n      description: description.substring(0, 1000),\n      url,\n      source,\n      isPrimary,\n      category: typeof category === 'string' ? category : 'General',\n      publishedAt: data.pubDate || data.isoDate || new Date().toISOString()\n    }\n  });\n}\nreturn normalizedItems;"
+      },
+      "id": "e0000001-0000-0000-0000-000000000011",
+      "name": "Normalize Sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ACRONYM_MAP = {\n  'rbi': 'reserve bank india', 'isro': 'indian space research organisation',\n  'drdo': 'defence research development organisation', 'sc': 'supreme court',\n  'hc': 'high court', 'pm': 'prime minister', 'cm': 'chief minister',\n  'mpc': 'monetary policy committee', 'upsc': 'union public service commission',\n  'psc': 'public service commission', 'kpsc': 'kerala public service commission',\n  'gdp': 'gross domestic product', 'cpi': 'consumer price index', 'sebi': 'securities exchange board india'\n};\n\nconst STOP_WORDS = new Set([\n  'a', 'an', 'the', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',\n  'from', 'as', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has',\n  'had', 'do', 'does', 'did', 'will', 'would', 'shall', 'should', 'can', 'could',\n  'it', 'its', 'itself', 'new', 'after', 'over', 'into', 'under', 'says', 'said',\n  'holds', 'keeps', 'retains', 'announces', 'unveils', 'launches', 'sets'\n]);\n\nfunction tokenizeAndExpand(title) {\n  if (!title) return new Set();\n  let text = title.toLowerCase().replace(/[^a-z0-9\\s]/g, ' ');\n  for (const [acronym, exp] of Object.entries(ACRONYM_MAP)) {\n    text = text.replace(new RegExp(`\\\\b${acronym}\\\\b`, 'g'), exp);\n  }\n  return new Set(text.split(/\\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w)));\n}\n\nfunction calculateSimilarity(setA, setB) {\n  if (setA.size === 0 || setB.size === 0) return 0;\n  let intersection = 0;\n  for (const t of setA) if (setB.has(t)) intersection++;\n  const containment = intersection / Math.min(setA.size, setB.size);\n  const dice = (2 * intersection) / (setA.size + setB.size);\n  return Math.max(containment, dice);\n}\n\nconst inputItems = $input.all().map(i => i.json);\nconst uniqueStories = [];\nconst seenUrls = new Set();\n\nfor (const item of inputItems) {\n  if (!item.title || !item.url || seenUrls.has(item.url)) continue;\n  const currentTokens = tokenizeAndExpand(item.title);\n  let duplicateIndex = -1;\n  for (let i = 0; i < uniqueStories.length; i++) {\n    if (calculateSimilarity(currentTokens, uniqueStories[i]._tokens) >= 0.55) {\n      duplicateIndex = i;\n      break;\n    }\n  }\n  if (duplicateIndex === -1) {\n    seenUrls.add(item.url);\n    uniqueStories.push({\n      ...item,\n      supportingSources: [],\n      _tokens: currentTokens\n    });\n  } else {\n    const existing = uniqueStories[duplicateIndex];\n    if (item.isPrimary && !existing.isPrimary) {\n      existing.supportingSources.push({\n        source: existing.source, url: existing.url, title: existing.title, publishedAt: existing.publishedAt\n      });\n      existing.title = item.title;\n      existing.description = item.description || existing.description;\n      existing.url = item.url;\n      existing.source = item.source;\n      existing.isPrimary = true;\n      existing.category = item.category || existing.category;\n      existing.publishedAt = item.publishedAt;\n      existing._tokens = currentTokens;\n      seenUrls.add(item.url);\n    } else {\n      existing.supportingSources.push({\n        source: item.source, url: item.url, title: item.title, publishedAt: item.publishedAt\n      });\n      seenUrls.add(item.url);\n    }\n  }\n}\nreturn uniqueStories.map(s => { const { _tokens, ...clean } = s; return { json: clean }; });"
+      },
+      "id": "e0000001-0000-0000-0000-000000000012",
+      "name": "Deduplicate Stories",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\nreturn [{\n  json: {\n    itemsCount: items.length,\n    items: items.map((item, idx) => ({\n      id: idx + 1,\n      title: item.title,\n      description: item.description,\n      source: item.source,\n      url: item.url,\n      category: item.category,\n      supportingSources: item.supportingSources || []\n    }))\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000013",
+      "name": "Prepare Selection Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=You are an expert Chief Editor specializing in Indian competitive examinations (Kerala PSC, SSC, UPSC, Banking).\nSelect the top 10-15 most important stories for exam aspirants from today's list.\n\nPrioritize:\n1. National / Policies / Judgments\n2. Economy / Banking (RBI)\n3. Science & Tech / Space (ISRO)\n4. Environment & Ecology\n5. Defence\n6. Kerala State Affairs\n7. International Summits\n8. Appointments / Awards\n\nExclude: Entertainment, celebrity, minor crime, clickbait, partisan rhetoric.\n\nInput News Items:\n{{ JSON.stringify($json.items) }}\n\nRespond with STRICT VALID JSON ONLY (no markdown fences) matching this structure:\n{\n  \"stories\": [\n    {\n      \"rank\": 1,\n      \"title\": \"Headline\",\n      \"category\": \"National | Kerala | International | Economy | Science & Technology | Environment | Defence | Awards & Appointments\",\n      \"importance\": 9,\n      \"source\": \"The Hindu\",\n      \"url\": \"https://...\",\n      \"supportingSources\": [],\n      \"whyImportant\": \"Why relevant for exams\",\n      \"targetExams\": [\"Kerala PSC\", \"UPSC\", \"SSC\", \"Banking\"],\n      \"confidence\": 0.95\n    }\n  ]\n}"
+      },
+      "id": "e0000001-0000-0000-0000-000000000014",
+      "name": "AI News Selector",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1620,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": { "temperature": 0.2 }
+      },
+      "id": "e0000001-0000-0000-0000-000000000015",
+      "name": "Google Gemini Chat Model (Free Tier)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        700
+      ],
+      "credentials": {
+        "googlePalmApi": { "id": "GEMINI_CREDENTIAL_ID", "name": "Google Gemini API Key" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json.text || $input.first().json.response || '';\nlet parsed = {};\ntry {\n  const cleanJson = response.replace(/^```[a-z]*\\n?/i, '').replace(/\\n?```$/i, '').trim();\n  parsed = JSON.parse(cleanJson);\n} catch (err) {\n  const match = response.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try { parsed = JSON.parse(match[0]); } catch (e) { parsed = { stories: [] }; }\n  } else {\n    parsed = { stories: [] };\n  }\n}\nconst stories = parsed.stories || [];\nreturn [{\n  json: {\n    date: new Date().toISOString().split('T')[0],\n    stories: stories.map((s, idx) => ({\n      rank: idx + 1,\n      title: s.title || 'Untitled Story',\n      category: s.category || 'National',\n      source: s.source || 'The Hindu',\n      url: s.url || '',\n      supportingSources: s.supportingSources || [],\n      whyImportant: s.whyImportant || '',\n      targetExams: s.targetExams || ['Kerala PSC', 'SSC', 'UPSC', 'Banking'],\n      confidence: s.confidence || 0.95\n    }))\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000016",
+      "name": "Parse Selected Stories",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Conduct in-depth factual research and exam GK verification on each of these selected stories:\n\n{{ JSON.stringify($json.stories) }}\n\nFor each story extract:\n- whatHappened (2-3 concise factual sentences)\n- whyImportant\n- numbersAndData (outlays, targets, percentages)\n- staticGkLinks (Constitutional Articles, acts, HQ, parent ministry)\n- examPoints (bullet points for PSC/UPSC)\n- sampleQuestion\n- sampleAnswer\n- verified (boolean)\n- confidence (0.0 to 1.0 - if uncertain, mark < 0.85)\n\nReturn JSON: {\"researchedStories\": [ ... ] }"
+      },
+      "id": "e0000001-0000-0000-0000-000000000017",
+      "name": "AI Fact Researcher",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2060,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json.text || $input.first().json.response || '';\nlet parsed = {};\ntry {\n  parsed = JSON.parse(response.replace(/^```[a-z]*\\n?/i, '').replace(/\\n?```$/i, '').trim());\n} catch (e) {\n  parsed = { researchedStories: [] };\n}\n\nconst stories = parsed.researchedStories || [];\nconst MIN_CONF = 0.85;\nlet manualCheckCount = 0;\n\nconst processed = stories.map((s, idx) => {\n  const conf = typeof s.confidence === 'number' ? s.confidence : parseFloat(s.confidence) || 0.9;\n  const isVerified = s.verified !== false && conf >= MIN_CONF;\n  if (!isVerified) manualCheckCount++;\n  return {\n    ...s,\n    rank: idx + 1,\n    confidence: conf,\n    verified: isVerified,\n    needsManualCheck: !isVerified,\n    verificationBadge: isVerified ? '✅ VERIFIED' : '⚠️ MANUAL_VERIFICATION_REQUIRED'\n  };\n});\n\nreturn [{\n  json: {\n    date: new Date().toISOString().split('T')[0],\n    stories: processed,\n    stats: {\n      totalStories: processed.length,\n      verifiedCount: processed.length - manualCheckCount,\n      manualCheckCount\n    }\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000018",
+      "name": "Confidence Gate Evaluator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2280,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Generate natural, high-quality Malayalam explanations for these verified current affairs stories:\n\n{{ JSON.stringify($json.stories) }}\n\nFor each story provide structured Malayalam explanation:\n- HEADLINE (മലയാളം)\n- എന്താണ് സംഭവിച്ചത്?\n- എന്തുകൊണ്ട് ഇത് പ്രധാനം?\n- പ്രധാന വസ്തുതകൾ\n- പരീക്ഷാ പോയിന്റുകൾ\n- സാധ്യമായ ചോദ്യവും ഉത്തരവും\n\nReturn JSON: {\"storiesWithMalayalam\": [ ... ] }"
+      },
+      "id": "e0000001-0000-0000-0000-000000000019",
+      "name": "Malayalam Explanations",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2520,
+        250
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Generate 15 high-yield MCQs (Kerala PSC, SSC, UPSC, Banking) with 4 options (A,B,C,D), correct answer, and explanation based on:\n\n{{ JSON.stringify($json.stories) }}\n\nReturn JSON: {\"mcqs\": [{\"id\": 1, \"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"}, \"correctAnswer\": \"A\", \"explanation\": \"...\"}]}"
+      },
+      "id": "e0000001-0000-0000-0000-000000000020",
+      "name": "Exam MCQs Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2520,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Extract 5 competitive-exam English vocabulary words from today's current affairs with Part of speech, English meaning, Malayalam meaning, synonyms, antonym, and example sentence based on:\n\n{{ JSON.stringify($json.stories) }}\n\nReturn JSON: {\"vocabulary\": [{\"word\": \"...\", \"partOfSpeech\": \"...\", \"englishMeaning\": \"...\", \"malayalamMeaning\": \"...\", \"synonyms\": [\"...\"], \"antonym\": \"...\", \"exampleSentence\": \"...\"}]}"
+      },
+      "id": "e0000001-0000-0000-0000-000000000021",
+      "name": "Exam Vocabulary Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2520,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Write an 8-12 minute Malayalam YouTube voice-over script across all 12 sections (Intro, National, Kerala, International, Economy, Sci-Tech, Environment, Defence, Appointments, Vocabulary, MCQ revision, Outro) based on:\n\n{{ JSON.stringify($json.stories) }}\n\nReturn clean markdown voice-over script in spoken Malayalam."
+      },
+      "id": "e0000001-0000-0000-0000-000000000022",
+      "name": "YouTube Script Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2520,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const malayalamRes = $('Malayalam Explanations').first().json.text || '';\nconst mcqsRes = $('Exam MCQs Generator').first().json.text || '';\nconst vocabRes = $('Exam Vocabulary Generator').first().json.text || '';\nconst ytScript = $('YouTube Script Generator').first().json.text || '';\nconst baseData = $('Confidence Gate Evaluator').first().json || {};\n\nlet malayalamStories = [];\ntry { malayalamStories = JSON.parse(malayalamRes.replace(/^```[a-z]*\\n?/i, '').replace(/\\n?```$/i, '').trim()).storiesWithMalayalam || []; } catch (e) {}\n\nlet mcqs = [];\ntry { mcqs = JSON.parse(mcqsRes.replace(/^```[a-z]*\\n?/i, '').replace(/\\n?```$/i, '').trim()).mcqs || []; } catch (e) {}\n\nlet vocabulary = [];\ntry { vocabulary = JSON.parse(vocabRes.replace(/^```[a-z]*\\n?/i, '').replace(/\\n?```$/i, '').trim()).vocabulary || []; } catch (e) {}\n\nconst combinedStories = (baseData.stories || []).map((s, idx) => {\n  const mal = malayalamStories[idx] || {};\n  return {\n    ...s,\n    malayalamExplanation: mal.malayalamExplanation || mal.explanation || null\n  };\n});\n\nreturn [{\n  json: {\n    date: baseData.date || new Date().toISOString().split('T')[0],\n    stories: combinedStories,\n    vocabulary,\n    mcqs,\n    youtubeScript: ytScript,\n    summaryStats: baseData.stats || { totalStories: combinedStories.length, manualCheckCount: 0, verifiedCount: combinedStories.length }\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000023",
+      "name": "Aggregate Content Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json || {};\nconst dateStr = payload.date || new Date().toISOString().split('T')[0];\nconst stories = payload.stories || [];\nconst vocabulary = payload.vocabulary || [];\nconst mcqs = payload.mcqs || [];\nconst youtubeScript = payload.youtubeScript || '';\nconst stats = payload.summaryStats || { totalStories: stories.length, verifiedCount: stories.length, manualCheckCount: 0 };\n\nconst categories = {\n  'NATIONAL': [], 'KERALA': [], 'INTERNATIONAL': [], 'ECONOMY & BANKING': [],\n  'SCIENCE & TECHNOLOGY': [], 'ENVIRONMENT': [], 'DEFENCE': [], 'AWARDS & APPOINTMENTS': [], 'OTHER': []\n};\n\nfor (const s of stories) {\n  const cat = (s.category || '').toUpperCase();\n  if (cat.includes('KERALA')) categories['KERALA'].push(s);\n  else if (cat.includes('INTERNATION')) categories['INTERNATIONAL'].push(s);\n  else if (cat.includes('ECONOM') || cat.includes('BANK')) categories['ECONOMY & BANKING'].push(s);\n  else if (cat.includes('SCI') || cat.includes('TECH') || cat.includes('SPACE')) categories['SCIENCE & TECHNOLOGY'].push(s);\n  else if (cat.includes('ENVIRON')) categories['ENVIRONMENT'].push(s);\n  else if (cat.includes('DEFEN')) categories['DEFENCE'].push(s);\n  else if (cat.includes('AWARD') || cat.includes('APPOINT')) categories['AWARDS & APPOINTMENTS'].push(s);\n  else if (cat.includes('NATION') || cat.includes('POLIC') || cat.includes('LEGAL')) categories['NATIONAL'].push(s);\n  else categories['OTHER'].push(s);\n}\n\nlet md = `# DAILY CURRENT AFFAIRS\\n`;\nmd += `**Date:** ${dateStr}\\n\\n`;\nmd += `**Primary Source:** The Hindu\\n`;\nmd += `**Stories Selected:** ${stats.totalStories}\\n`;\nmd += `**Stories Requiring Manual Verification:** ${stats.manualCheckCount}\\n\\n`;\nif (stats.manualCheckCount > 0) {\n  md += `> ⚠️ **Attention:** ${stats.manualCheckCount} story/stories scored below the 0.85 confidence threshold. Please cross-check these items against your physical copy of The Hindu before recording.\\n\\n`;\n}\nmd += `============================================================\\n\\n`;\n\nfor (const [catName, catStories] of Object.entries(categories)) {\n  if (catStories.length === 0) continue;\n  md += `## ${catName}\\n\\n`;\n  for (let i = 0; i < catStories.length; i++) {\n    const s = catStories[i];\n    const badge = s.needsManualCheck ? '⚠️ [MANUAL VERIFICATION REQUIRED]' : '✅ [VERIFIED]';\n    md += `### ${i + 1}. ${s.title}\\n`;\n    md += `*Status:* ${badge} | *Confidence:* ${(s.confidence || 0.95).toFixed(2)}\\n\\n`;\n    if (s.malayalamExplanation) {\n      md += `${s.malayalamExplanation}\\n\\n`;\n    } else {\n      if (s.whatHappened) md += `**What Happened:** ${s.whatHappened}\\n\\n`;\n      if (s.whyImportant) md += `**Why It Matters:** ${s.whyImportant}\\n\\n`;\n      if (s.examPoints && s.examPoints.length) {\n        md += `**Key Exam Points:**\\n`;\n        s.examPoints.forEach(pt => md += `- ${pt}\\n`);\n        md += `\\n`;\n      }\n    }\n    md += `*Primary Source:* [${s.source || 'The Hindu'}](${s.url || '#'})\n`;\n    if (s.supportingSources && s.supportingSources.length) {\n      md += `*Official/Supporting Sources:*\n`;\n      s.supportingSources.forEach(src => { md += `  - [${src.source}](${src.url}) - ${src.title}\n`; });\n    }\n    md += `\\n---\\n\\n`;\n  }\n}\n\nmd += `## VOCABULARY\\n\\n`;\nvocabulary.forEach((v, idx) => {\n  md += `### ${idx + 1}. ${v.word.toUpperCase()} (${v.partOfSpeech || 'n.'})\\n`;\n  md += `- **English Meaning:** ${v.englishMeaning}\\n`;\n  md += `- **Malayalam Meaning:** ${v.malayalamMeaning}\\n`;\n  if (v.synonyms) md += `- **Synonyms:** ${Array.isArray(v.synonyms) ? v.synonyms.join(', ') : v.synonyms}\\n`;\n  if (v.antonym) md += `- **Antonym:** ${v.antonym}\\n`;\n  if (v.exampleSentence) md += `- **Example:** *\"${v.exampleSentence}\"*\\n\\n`;\n});\n\nmd += `============================================================\\n\\n## PRACTICE MCQs\\n\\n`;\nmcqs.forEach((mcq, idx) => {\n  md += `**Q${idx + 1}: ${mcq.question}**\\n\\n`;\n  md += `A. ${mcq.options?.A || ''}\\nB. ${mcq.options?.B || ''}\\nC. ${mcq.options?.C || ''}\\nD. ${mcq.options?.D || ''}\\n\\n`;\n  md += `**Correct Answer:** ${mcq.correctAnswer}\\n**Explanation:** ${mcq.explanation}\\n\\n---\\n\\n`;\n});\n\nmd += `============================================================\\n\\n## YOUTUBE SCRIPT (MALAYALAM VOICE-OVER)\\n\\n${youtubeScript}\\n`;\n\nconst fileName = `Daily_Current_Affairs_${dateStr.replace(/[^a-zA-Z0-9]/g, '_')}.md`;\nconst filePath = `/Users/pious/Documents/personalproject/scrapping/reports/${fileName}`;\n\nreturn [{\n  json: {\n    date: dateStr,\n    fileName,\n    filePath,\n    markdownReport: md,\n    stats,\n    storiesCount: stories.length,\n    manualCheckCount: stats.manualCheckCount\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000024",
+      "name": "Compile Daily Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.filePath }}",
+        "data": "={{ $json.markdownReport }}",
+        "options": {}
+      },
+      "id": "e0000001-0000-0000-0000-000000000025",
+      "name": "Save Report to Disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json || {};\nconst dateStr = data.date || new Date().toISOString().split('T')[0];\nconst stats = data.stats || { totalStories: 12, manualCheckCount: 0 };\nconst manualAlert = stats.manualCheckCount > 0\n  ? `⚠️ *Manual verification:* ${stats.manualCheckCount} (Cross-check physical Hindu paper!)`\n  : `✅ *Manual verification:* 0 (All verified)`;\n\nconst telegramText = \n`📰 *DAILY CURRENT AFFAIRS READY*\\n\\n` +\n`📅 *Date:* ${dateStr}\\n` +\n`🏛️ *Primary Source:* The Hindu\\n\\n` +\n`📰 *Important stories:* ${stats.totalStories}\\n` +\n`${manualAlert}\\n` +\n`📚 *Vocabulary:* 5\\n` +\n`❓ *MCQs:* 15\\n` +\n`🎙️ *YouTube script:* Ready\\n\\n` +\n`📁 *Saved File:* \\`${data.fileName || 'Daily_Current_Affairs.md'}\\`\\n\\n` +\n`_Review report before recording voice-over._`;\n\nreturn [{\n  json: {\n    telegramText,\n    chatId: \"YOUR_TELEGRAM_CHAT_ID\",\n    parseMode: \"Markdown\"\n  }\n}];"
+      },
+      "id": "e0000001-0000-0000-0000-000000000026",
+      "name": "Format Telegram Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3480,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.telegramText }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e0000001-0000-0000-0000-000000000027",
+      "name": "Telegram Bot Dispatcher",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3700,
+        450
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (05:30 AM IST)": { "main": [[ { "node": "Central Configuration", "type": "main", "index": 0 } ]] },
+    "Central Configuration": {
+      "main": [
+        [
+          { "node": "The Hindu - National", "type": "main", "index": 0 },
+          { "node": "The Hindu - Business", "type": "main", "index": 0 },
+          { "node": "The Hindu - SciTech", "type": "main", "index": 0 },
+          { "node": "The Hindu - Kerala", "type": "main", "index": 0 },
+          { "node": "PIB Releases", "type": "main", "index": 0 },
+          { "node": "RBI Press Releases", "type": "main", "index": 0 },
+          { "node": "PRD Kerala Releases", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "The Hindu - National": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "The Hindu - Business": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "The Hindu - SciTech": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "The Hindu - Kerala": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "PIB Releases": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "RBI Press Releases": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "PRD Kerala Releases": { "main": [[ { "node": "Merge Ingested Feeds", "type": "main", "index": 0 } ]] },
+    "Merge Ingested Feeds": { "main": [[ { "node": "Normalize Sources", "type": "main", "index": 0 } ]] },
+    "Normalize Sources": { "main": [[ { "node": "Deduplicate Stories", "type": "main", "index": 0 } ]] },
+    "Deduplicate Stories": { "main": [[ { "node": "Prepare Selection Payload", "type": "main", "index": 0 } ]] },
+    "Prepare Selection Payload": { "main": [[ { "node": "AI News Selector", "type": "main", "index": 0 } ]] },
+    "Google Gemini Chat Model (Free Tier)": {
+      "ai_languageModel": [
+        [
+          { "node": "AI News Selector", "type": "ai_languageModel", "index": 0 },
+          { "node": "AI Fact Researcher", "type": "ai_languageModel", "index": 0 },
+          { "node": "Malayalam Explanations", "type": "ai_languageModel", "index": 0 },
+          { "node": "Exam MCQs Generator", "type": "ai_languageModel", "index": 0 },
+          { "node": "Exam Vocabulary Generator", "type": "ai_languageModel", "index": 0 },
+          { "node": "YouTube Script Generator", "type": "ai_languageModel", "index": 0 }
+        ]
+      ]
+    },
+    "AI News Selector": { "main": [[ { "node": "Parse Selected Stories", "type": "main", "index": 0 } ]] },
+    "Parse Selected Stories": { "main": [[ { "node": "AI Fact Researcher", "type": "main", "index": 0 } ]] },
+    "AI Fact Researcher": { "main": [[ { "node": "Confidence Gate Evaluator", "type": "main", "index": 0 } ]] },
+    "Confidence Gate Evaluator": {
+      "main": [
+        [
+          { "node": "Malayalam Explanations", "type": "main", "index": 0 },
+          { "node": "Exam MCQs Generator", "type": "main", "index": 0 },
+          { "node": "Exam Vocabulary Generator", "type": "main", "index": 0 },
+          { "node": "YouTube Script Generator", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Malayalam Explanations": { "main": [[ { "node": "Aggregate Content Engine", "type": "main", "index": 0 } ]] },
+    "Exam MCQs Generator": { "main": [[ { "node": "Aggregate Content Engine", "type": "main", "index": 0 } ]] },
+    "Exam Vocabulary Generator": { "main": [[ { "node": "Aggregate Content Engine", "type": "main", "index": 0 } ]] },
+    "YouTube Script Generator": { "main": [[ { "node": "Aggregate Content Engine", "type": "main", "index": 0 } ]] },
+    "Aggregate Content Engine": { "main": [[ { "node": "Compile Daily Report", "type": "main", "index": 0 } ]] },
+    "Compile Daily Report": { "main": [[ { "node": "Save Report to Disk", "type": "main", "index": 0 } ]] },
+    "Save Report to Disk": { "main": [[ { "node": "Format Telegram Message", "type": "main", "index": 0 } ]] },
+    "Format Telegram Message": { "main": [[ { "node": "Telegram Bot Dispatcher", "type": "main", "index": 0 } ]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

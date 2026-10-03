@@ -1,0 +1,323 @@
+/* @theme education-reel-9-16 */
+/* @size 9:16 1080px 1920px */
+@import 'default';
+@import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Noto+Sans+Malayalam:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap');
+
+section {
+  width: 1080px;
+  height: 1920px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Noto Sans Malayalam', 'Malayalam Sangam MN', 'Manjari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle top and bottom brand accents */
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: linear-gradient(90deg, #2563eb 0%, #0284c7 35%, #059669 70%, #d97706 100%);
+  z-index: 10;
+}
+
+.edu-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 100px 65px 80px 65px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header Area */
+.edu-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.edu-series-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #e2e8f0;
+  border: 1.5px solid #cbd5e1;
+  color: #1e293b;
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 26px;
+  border-radius: 40px;
+  margin-bottom: 14px;
+}
+
+.edu-lastday-pill {
+  display: inline-block;
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+  color: #b91c1c;
+  font-size: 22px;
+  font-weight: 900;
+  padding: 8px 24px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+
+.edu-category-pill {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 800;
+  padding: 8px 28px;
+  border-radius: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+/* Light Theme Category Colors */
+.category-scholarship {
+  background: #fef08a;
+  color: #854d0e;
+  border: 1.5px solid #facc15;
+}
+
+.category-entrance {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1.5px solid #7dd3fc;
+}
+
+.category-teachers {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border: 1.5px solid #d8b4fe;
+}
+
+.category-school {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1.5px solid #86efac;
+}
+
+.category-foreign {
+  background: #ffe4e6;
+  color: #9f1239;
+  border: 1.5px solid #fda4af;
+}
+
+.edu-main-title {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.35;
+  color: #0f172a;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.edu-sub-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+/* Main Content Card (Crisp White Card with Soft Shadow) */
+.edu-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 28px;
+  padding: 40px 42px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Key Point-by-Point Rows */
+.edu-point-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid #f1f5f9;
+}
+
+.edu-point-icon {
+  font-size: 30px;
+  min-width: 42px;
+  padding-top: 2px;
+}
+
+.edu-point-body {
+  flex: 1;
+}
+
+.edu-point-label {
+  font-size: 19px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 5px;
+  letter-spacing: 0.3px;
+}
+
+.edu-point-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #0f172a;
+}
+
+/* Sub-points list for criteria */
+.edu-point-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.edu-point-item {
+  position: relative;
+  padding-left: 28px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #1e293b;
+}
+
+.edu-point-item::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: #2563eb;
+  font-size: 34px;
+  line-height: 1;
+  top: -3px;
+}
+
+/* High-Contrast LAST DATE Highlight Box */
+.edu-highlight-deadline {
+  background: #fff1f2;
+  border: 2.5px solid #f43f5e;
+  border-radius: 20px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.edu-highlight-deadline .edu-point-icon {
+  font-size: 38px;
+}
+
+.edu-highlight-deadline .edu-point-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: #e11d48;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.edu-highlight-deadline .edu-point-value {
+  font-size: 36px;
+  font-weight: 900;
+  color: #be123c;
+}
+
+/* Secondary EXAM DATE Box */
+.edu-highlight-exam {
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.edu-highlight-exam .edu-point-icon {
+  font-size: 32px;
+}
+
+.edu-highlight-exam .edu-point-label {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1d4ed8;
+  text-transform: uppercase;
+}
+
+.edu-highlight-exam .edu-point-value {
+  font-size: 30px;
+  font-weight: 800;
+  color: #1e40af;
+}
+
+/* Website Highlight Box */
+.edu-highlight-website {
+  background: #f0fdf4;
+  border: 2px solid #22c55e;
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.edu-highlight-website .edu-point-icon {
+  font-size: 30px;
+}
+
+.edu-highlight-website .edu-point-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: #15803d;
+  text-transform: uppercase;
+}
+
+.edu-highlight-website .edu-point-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #166534;
+  word-break: break-all;
+}
+
+/* Bottom Footer */
+.edu-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+}
+
+.edu-source-tag {
+  font-size: 20px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.edu-source-tag strong {
+  color: #0f172a;
+}
+
+.edu-date-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #94a3b8;
+}

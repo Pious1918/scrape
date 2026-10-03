@@ -1,0 +1,175 @@
+{
+  "name": "Daily Current Affairs - Milestone 3 (Malayalam Content, MCQs & Script)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 5 * * *"
+            }
+          ]
+        }
+      },
+      "id": "30000001-0000-0000-0000-000000000001",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mock or incoming researched stories dataset\nreturn [{\n  json: {\n    date: new Date().toISOString().split('T')[0],\n    stories: [\n      {\n        title: \"Union Cabinet approves Rs 10,000 Cr Semiconductor Mission Expansion\",\n        category: \"National\",\n        source: \"The Hindu\",\n        whatHappened: \"The Union Cabinet approved a financial outlay of Rs 10,000 Crore to boost domestic semiconductor fabrication.\",\n        whyImportant: \"Crucial for electronics indigenization and strategic supply chain autonomy.\",\n        numbersAndData: [\"Rs 10,000 Crore outlay\", \"Target year 2028\"],\n        examPoints: [\"India Semiconductor Mission (ISM) operates under MeitY\", \"Scheme offers up to 50% fiscal support\"],\n        confidence: 0.96,\n        verified: true\n      },\n      {\n        title: \"RBI retains repo rate at 6.5% in latest Monetary Policy Committee review\",\n        category: \"Economy\",\n        source: \"The Hindu\",\n        whatHappened: \"Monetary Policy Committee voted unanimously to keep the policy repo rate unchanged at 6.5%.\",\n        whyImportant: \"Balances inflation targeting within 4+/-2% tolerance band while supporting GDP growth.\",\n        numbersAndData: [\"Repo rate: 6.5%\", \"SDF: 6.25%\", \"MSF: 6.75%\"],\n        examPoints: [\"MPC consists of 6 members (3 RBI, 3 Govt appointed)\", \"Constituted under Section 45ZB of RBI Act 1934\"],\n        confidence: 0.98,\n        verified: true\n      }\n    ]\n  }\n}];"
+      },
+      "id": "30000001-0000-0000-0000-000000000002",
+      "name": "Mock Researched Dataset",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Generate natural, exam-oriented Malayalam explanations for these verified current affairs:\n\n{{ JSON.stringify($json.stories) }}\n\nFor each story, provide:\n- HEADLINE (മലയാളത്തിൽ)\n- എന്താണ് സംഭവിച്ചത്? (2-3 sentences)\n- എന്തുകൊണ്ട് ഇത് പ്രധാനമാണ്?\n- പ്രധാന വസ്തുതകൾ (Bullet points)\n- പരീക്ഷാ പോയിന്റുകൾ (PSC/UPSC exam focus)\n- സാധ്യമായ ചോദ്യവും ഉത്തരവും\n\nReturn JSON: {\"storiesWithMalayalam\": [ ... ] }"
+      },
+      "id": "30000001-0000-0000-0000-000000000003",
+      "name": "Malayalam Content Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Generate 15 high-quality competitive exam MCQs (Kerala PSC, SSC, UPSC, Banking) based strictly on these stories:\n\n{{ JSON.stringify($json.stories) }}\n\nReturn JSON: {\"mcqs\": [{\"id\": 1, \"question\": \"...\", \"options\": {\"A\":\"...\", \"B\":\"...\", \"C\":\"...\", \"D\":\"...\"}, \"correctAnswer\": \"A\", \"explanation\": \"...\"}]}"
+      },
+      "id": "30000001-0000-0000-0000-000000000004",
+      "name": "MCQ Generator (15 MCQs)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Extract exactly 5 high-yield English vocabulary words from today's news context:\n\n{{ JSON.stringify($json.stories) }}\n\nReturn JSON: {\"vocabulary\": [{\"word\":\"...\",\"partOfSpeech\":\"...\",\"englishMeaning\":\"...\",\"malayalamMeaning\":\"...\",\"synonyms\":[\"...\"],\"antonym\":\"...\",\"exampleSentence\":\"...\"}]}"
+      },
+      "id": "30000001-0000-0000-0000-000000000005",
+      "name": "Vocabulary Generator (5 Words)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Generate a comprehensive, engaging 8-12 minute Malayalam YouTube voice-over script for competitive exam aspirants based on:\n\nStories: {{ JSON.stringify($json.stories) }}\n\nStructure:\n1. Intro\n2. National\n3. Kerala\n4. International\n5. Economy\n6. Science & Tech\n7. Environment\n8. Defence\n9. Appointments/Awards\n10. Daily Vocabulary\n11. MCQ Revision\n12. Outro\n\nReturn full spoken Malayalam script in markdown."
+      },
+      "id": "30000001-0000-0000-0000-000000000006",
+      "name": "YouTube Voice-Over Script Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": { "temperature": 0.2 }
+      },
+      "id": "30000001-0000-0000-0000-000000000007",
+      "name": "OpenAI Model (Content)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        640,
+        800
+      ],
+      "credentials": {
+        "openAiApi": { "id": "OPENAI_CREDENTIAL_ID", "name": "OpenAI account" }
+      }
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Mock Researched Dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock Researched Dataset": {
+      "main": [
+        [
+          {
+            "node": "Malayalam Content Generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MCQ Generator (15 MCQs)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Vocabulary Generator (5 Words)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "YouTube Voice-Over Script Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model (Content)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Malayalam Content Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MCQ Generator (15 MCQs)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Vocabulary Generator (5 Words)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "YouTube Voice-Over Script Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

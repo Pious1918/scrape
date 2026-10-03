@@ -1,0 +1,24 @@
+{
+  "language": "Malayalam",
+  "primary_source": "The Hindu",
+  "categories": [
+    "Kerala",
+    "India (National & Economy)",
+    "International",
+    "Sports"
+  ],
+  "target_exams": [
+    "Kerala PSC",
+    "SSC",
+    "UPSC",
+    "Banking"
+  ],
+  "min_story_count": 10,
+  "max_story_count": 20,
+  "daily_story_count": 15,
+  "vocabulary_count": 2,
+  "timezone": "Asia/Kolkata",
+  "minimum_confidence": 0.85,
+  "report_storage_path": "./reports/",
+  "export_pdf": true
+}

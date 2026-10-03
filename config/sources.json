@@ -1,0 +1,84 @@
+{
+  "primary_sources": [
+    {
+      "name": "The Hindu - National",
+      "category": "India",
+      "type": "rss",
+      "url": "https://www.thehindu.com/news/national/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    },
+    {
+      "name": "The Hindu - Kerala",
+      "category": "Kerala",
+      "type": "rss",
+      "url": "https://www.thehindu.com/news/national/kerala/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    },
+    {
+      "name": "The Hindu - International",
+      "category": "International",
+      "type": "rss",
+      "url": "https://www.thehindu.com/news/international/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    },
+    {
+      "name": "The Hindu - Sport",
+      "category": "Sports",
+      "type": "rss",
+      "url": "https://www.thehindu.com/sport/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    },
+    {
+      "name": "The Hindu - Business & Economy",
+      "category": "India",
+      "type": "rss",
+      "url": "https://www.thehindu.com/business/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    },
+    {
+      "name": "The Hindu - Science & Tech",
+      "category": "India",
+      "type": "rss",
+      "url": "https://www.thehindu.com/sci-tech/feeder/default.rss",
+      "isPrimary": true,
+      "enabled": true
+    }
+  ],
+  "supporting_sources": [
+    {
+      "name": "Information and Public Relations Department (PRD Kerala)",
+      "category": "Kerala",
+      "type": "rss",
+      "url": "https://prd.kerala.gov.in/en/rss.xml",
+      "isPrimary": false,
+      "enabled": true
+    },
+    {
+      "name": "Press Information Bureau (PIB)",
+      "category": "India",
+      "type": "rss",
+      "url": "https://pib.gov.in/RssMain.aspx?ModId=6&LangId=1",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
+      },
+      "isPrimary": false,
+      "enabled": true
+    },
+    {
+      "name": "Reserve Bank of India (RBI)",
+      "category": "India",
+      "type": "rss",
+      "url": "https://www.rbi.org.in/pressreleases_rss.xml",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      },
+      "isPrimary": false,
+      "enabled": true
+    }
+  ]
+}
