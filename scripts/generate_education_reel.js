@@ -187,6 +187,7 @@ function isSimilar(t1, t2) {
 }
 
 // Check if deadline is TODAY
+// Check if deadline is TODAY (Strict boundary match: e.g. 5 does not match 15 or 25)
 function isDeadlineToday(lastDateText) {
   if (!lastDateText || typeof lastDateText !== 'string') return false;
   const lower = lastDateText.toLowerCase();
@@ -194,21 +195,31 @@ function isDeadlineToday(lastDateText) {
 
   const d = new Date();
   const day = d.getDate();
+  const padDay = String(day).padStart(2, '0');
   const monthNamesMalayalam = [
     'ജനുവരി', 'ഫെബ്രുവരി', 'മാർച്ച്', 'ഏപ്രിൽ', 'മെയ്', 'ജൂൺ',
     'ജൂലൈ', 'ഓഗസ്റ്റ്', 'സെപ്റ്റംബർ', 'ഒക്ടോബർ', 'നവംബർ', 'ഡിസംബർ'
   ];
   const curMonthMl = monthNamesMalayalam[d.getMonth()];
-  if (lower.includes(curMonthMl) && lower.includes(String(day))) {
-    return true;
+  if (lower.includes(curMonthMl)) {
+    const dayRegex = new RegExp(`(?:^|\\D)(?:${day}|${padDay})(?:\\D|$)`);
+    return dayRegex.test(lower);
   }
   return false;
 }
 
-// Deduplicate alerts against history
-function filterAndDeduplicate(alerts, history, todayStr) {
+function isDeadlineExpired(lastDateText) {
+  if (!lastDateText || typeof lastDateText !== 'string') return false;
+  if (lastDateText.includes('കഴിഞ്ഞു') || lastDateText.toLowerCase().includes('expired')) return true;
+  return false;
+}
+
+// Deduplicate alerts against history while guaranteeing minimum required alerts
+function filterAndDeduplicate(alerts, history, todayStr, minCount = 4) {
   const pastHistory = history.filter(h => h.postedDate !== todayStr);
-  const result = [];
+  const freshAlerts = [];
+  const todayDeadlines = [];
+  const ongoingPool = [];
   const seenThisRun = new Set();
 
   for (const alert of alerts) {
@@ -222,23 +233,50 @@ function filterAndDeduplicate(alerts, history, todayStr) {
     );
 
     if (pastMatch) {
-      // If deadline is TODAY, include as high-urgency alert!
+      // If deadline is TODAY, prioritize as emergency alert!
       if (isDeadlineToday(alert.lastDate)) {
         alert.isLastDayAlert = true;
-        result.push(alert);
+        todayDeadlines.push(alert);
         seenThisRun.add(norm);
-        console.log(`🚨 Re-including yesterday's alert because deadline is TODAY: "${alert.title}"`);
+        console.log(`🚨 Re-including alert because deadline is TODAY: "${alert.title}"`);
+      } else if (!isDeadlineExpired(alert.lastDate)) {
+        // Collect into ongoing pool (valid application still accepting entries)
+        ongoingPool.push({ alert, norm });
+        console.log(`⏩ Previously posted alert kept in ongoing pool: "${alert.title}" (Due: ${alert.lastDate})`);
       } else {
-        console.log(`⏩ Skipping duplicate alert from yesterday: "${alert.title}" (Due: ${alert.lastDate})`);
+        console.log(`⏩ Skipping expired alert: "${alert.title}" (Due: ${alert.lastDate})`);
       }
     } else {
-      // Fresh new alert
-      result.push(alert);
+      // Fresh new alert never posted before
+      if (isDeadlineToday(alert.lastDate)) {
+        alert.isLastDayAlert = true;
+        todayDeadlines.push(alert);
+      } else {
+        freshAlerts.push(alert);
+      }
       seenThisRun.add(norm);
     }
   }
 
-  return result;
+  // Combine: 1st today's emergency deadlines, 2nd brand-new fresh alerts
+  const combined = [...todayDeadlines, ...freshAlerts];
+
+  // If still fewer than minCount (e.g. slow weekend or fewer new notices today),
+  // supplement from the active ongoing pool to guarantee viewers get at least minCount alerts!
+  if (combined.length < minCount && ongoingPool.length > 0) {
+    console.log(`ℹ️ Found ${combined.length} fresh/urgent alert(s). Supplementing with high-priority ongoing applications to guarantee at least ${minCount} alerts...`);
+    for (const item of ongoingPool) {
+      if (!seenThisRun.has(item.norm)) {
+        item.alert.isOngoingAlert = true;
+        combined.push(item.alert);
+        seenThisRun.add(item.norm);
+        console.log(`📌 Re-including active ongoing alert: "${item.alert.title}" (Due: ${item.alert.lastDate})`);
+      }
+      if (combined.length >= minCount) break;
+    }
+  }
+
+  return combined;
 }
 
 // Clean and parse JSON
@@ -391,38 +429,73 @@ async function processImage(imagePath) {
   return result.alerts || [];
 }
 
-// Mode B: Process Online RSS
+// Mode B: Process Online RSS & Web Pages
 async function processOnline() {
-  const rssUrl = "https://www.manoramaonline.com/career-education/education-news.feeds.rss.xml";
-  console.log(`🌐 Fetching live education feed: ${rssUrl}`);
-  const res = await fetch(rssUrl, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' }
-  });
-  if (!res.ok) throw new Error(`HTTP Error ${res.status} fetching RSS`);
-  const xml = await res.text();
+  const sources = [
+    { url: "https://www.manoramaonline.com/career-education/education-news.feeds.rss.xml", type: "rss" },
+    { url: "https://www.manoramaonline.com/career-education.feeds.rss.xml", type: "rss" },
+    { url: "https://www.manoramaonline.com/career-education/education-news.html", type: "html" }
+  ];
 
   const items = [];
-  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-  let match;
-  while ((match = itemRegex.exec(xml)) !== null) {
-    const raw = match[1];
-    const titleMatch = raw.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || raw.match(/<title>([\s\S]*?)<\/title>/);
-    const descMatch = raw.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || raw.match(/<description>([\s\S]*?)<\/description>/);
-    const linkMatch = raw.match(/<link>([\s\S]*?)<\/link>/);
+  const seenUrls = new Set();
 
-    if (titleMatch && descMatch) {
-      items.push({
-        title: titleMatch[1].trim(),
-        description: descMatch[1].replace(/<[^>]+>/g, '').trim(),
-        link: linkMatch ? linkMatch[1].trim() : ''
+  for (const src of sources) {
+    try {
+      console.log(`🌐 Fetching live education source: ${src.url}`);
+      const res = await fetch(src.url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' }
       });
+      if (!res.ok) continue;
+
+      if (src.type === 'rss') {
+        const xml = await res.text();
+        const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+        let match;
+        while ((match = itemRegex.exec(xml)) !== null) {
+          const raw = match[1];
+          const titleMatch = raw.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || raw.match(/<title>([\s\S]*?)<\/title>/);
+          const descMatch = raw.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || raw.match(/<description>([\s\S]*?)<\/description>/);
+          const linkMatch = raw.match(/<link>([\s\S]*?)<\/link>/);
+
+          const link = linkMatch ? linkMatch[1].trim() : '';
+          const title = titleMatch ? titleMatch[1].trim() : '';
+          if (title && !seenUrls.has(link || title)) {
+            seenUrls.add(link || title);
+            items.push({
+              title,
+              description: descMatch ? descMatch[1].replace(/<[^>]+>/g, '').trim() : '',
+              link
+            });
+          }
+        }
+      } else if (src.type === 'html') {
+        const html = await res.text();
+        const articleRegex = /<a[^>]+href=\"(\/career-education\/education-news\/[^\"]+\.html)\"[^>]*>([\s\S]*?)<\/a>/gi;
+        let m;
+        while ((m = articleRegex.exec(html)) !== null) {
+          const fullLink = 'https://www.manoramaonline.com' + m[1];
+          const title = m[2].replace(/<[^>]+>/g, '').trim();
+          if (title.length > 15 && !seenUrls.has(fullLink) && !seenUrls.has(title)) {
+            seenUrls.add(fullLink);
+            seenUrls.add(title);
+            items.push({
+              title,
+              description: '',
+              link: fullLink
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(`⚠️ Warning fetching ${src.url}: ${e.message}`);
     }
   }
 
-  console.log(`📡 Found ${items.length} live articles from education feed.`);
+  console.log(`📡 Ingested ${items.length} candidate articles across education feeds & web pages.`);
   const textPrompt = `${SYSTEM_PROMPT}\n\nHere are recent articles from Education News:\n\n` +
-    items.map((it, idx) => `ARTICLE ${idx + 1}:\nTitle: ${it.title}\nLink: ${it.link}\nDetails: ${it.description}\n`).join('\n---\n') +
-    `\nFilter and extract at least 5 to 6 distinct high-priority alerts into the specified JSON format. Focus strictly on deadlines, eligibility, and websites.`;
+    items.map((it, idx) => `ARTICLE ${idx + 1}:\nTitle: ${it.title}\nLink: ${it.link}\nDetails: ${it.description || '(Title only)'}\n`).join('\n---\n') +
+    `\nFilter and extract at least 8 to 10 distinct high-priority alerts into the specified JSON format. Focus strictly on deadlines, eligibility, and websites.`;
 
   console.log(`🤖 Analyzing articles with Gemini AI...`);
   const result = await callGemini([{ text: textPrompt }]);
@@ -491,7 +564,8 @@ paginate: false
 <div class="edu-header">
 <div class="edu-series-tag">🎓 SHRADHA EDU ALERTS</div>
 <br/>
-${alert.isLastDayAlert ? `<div class="edu-lastday-pill">🚨 ഇന്ന് അവസാന തീയതി! (LAST DAY TODAY!)</div><br/>` : ''}
+${alert.isLastDayAlert ? `<div class="edu-lastday-pill">🚨 ഇന്ന് അവസാന തീയതി! (LAST DAY TODAY!)</div><br/>` : 
+  (alert.isOngoingAlert ? `<div class="edu-lastday-pill" style="background:#eff6ff;color:#1d4ed8;border-color:#93c5fd;">⏳ അപേക്ഷ തുടരുന്നു (ONGOING APPLICATION)</div><br/>` : '')}
 <span class="edu-category-pill ${categoryClass}">${categoryBadge}</span>
 <h1 class="edu-main-title">${alert.title}</h1>
 ${alert.titleEn ? `<div class="edu-sub-title">${alert.titleEn}</div>` : ''}
@@ -603,9 +677,9 @@ async function main() {
   // Ensure all acronyms are strictly in uppercase English (never transliterated into Malayalam)
   rawAlerts = rawAlerts.map(sanitizeAlert);
 
-  // 1. Deduplicate against past history
+  // 1. Deduplicate against past history while guaranteeing minimum daily count
   console.log(`\n🔍 Checking alerts against past days history (avoiding repeats)...`);
-  let filteredAlerts = filterAndDeduplicate(rawAlerts, history, fileDate);
+  let filteredAlerts = filterAndDeduplicate(rawAlerts, history, fileDate, targetAlertsCount);
 
   // 2. Guarantee at least 4 news a day! If image mode didn't have 4 fresh alerts, fetch online to fill up
   if (filteredAlerts.length < targetAlertsCount && targetImagePath) {
@@ -613,7 +687,7 @@ async function main() {
     try {
       const onlineRaw = await processOnline();
       const onlineSanitized = onlineRaw.map(sanitizeAlert);
-      const onlineFiltered = filterAndDeduplicate(onlineSanitized, history, fileDate);
+      const onlineFiltered = filterAndDeduplicate(onlineSanitized, history, fileDate, targetAlertsCount - filteredAlerts.length);
       for (const oa of onlineFiltered) {
         if (!filteredAlerts.some(fa => isSimilar(fa.title, oa.title))) {
           filteredAlerts.push(oa);
@@ -626,7 +700,7 @@ async function main() {
   }
 
   if (filteredAlerts.length === 0) {
-    console.error('❌ No fresh educational alerts available today. All were either duplicate or empty.');
+    console.error('❌ No educational alerts available today. All were either duplicate or empty.');
     process.exit(1);
   }
 
@@ -634,7 +708,9 @@ async function main() {
 
   console.log(`\n✅ Providing ${selectedAlerts.length} high-yield educational alert(s) today (1 alert per slide):`);
   selectedAlerts.forEach((a, i) => {
-    const tag = a.isLastDayAlert ? '🚨 [LAST DAY TODAY]' : `[${a.category}]`;
+    let tag = `[${a.category}]`;
+    if (a.isLastDayAlert) tag = '🚨 [LAST DAY TODAY]';
+    else if (a.isOngoingAlert) tag = '⏳ [ONGOING APPLICATION]';
     console.log(`   ${i + 1}. ${tag} ${a.title} | Due: ${a.lastDate}`);
   });
 
