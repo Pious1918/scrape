@@ -16,8 +16,8 @@ OUTPUT_PDF="/Users/pious/Documents/personalproject/scrapping/reports/${REPORT_NA
 
 echo "📄 Generating Presentation PDF: $OUTPUT_PDF ..."
 
-# Convert using Marp to PDF with allow-local-files and no-stdin
-npx -y @marp-team/marp-cli "$LATEST_REPORT" --pdf --allow-local-files --no-stdin -o "$OUTPUT_PDF"
+# Convert using Marp to PDF with allow-local-files, html, and no-stdin
+npx -y @marp-team/marp-cli "$LATEST_REPORT" --html --pdf --allow-local-files --no-stdin -o "$OUTPUT_PDF"
 
 if [ $? -eq 0 ]; then
   echo "✅ High-Resolution Presentation PDF Created: $OUTPUT_PDF"

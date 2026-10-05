@@ -585,7 +585,7 @@ style: |
 
   .category-tag {
     display: inline-block;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -598,7 +598,7 @@ style: |
   }
 
   .main-title {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 800;
     color: #1e3a8a;
     line-height: 1.25;
@@ -608,7 +608,7 @@ style: |
   }
 
   .sub-title {
-    font-size: 16.5px;
+    font-size: 18px;
     font-weight: 700;
     color: #2563eb;
     margin: 0 0 7px 0;
@@ -616,8 +616,8 @@ style: |
   }
 
   .description {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.55;
     color: #334155;
     margin: 0 0 8px 0;
   }
@@ -626,12 +626,12 @@ style: |
     background: #ecfdf5;
     border: 1.5px solid #a7f3d0;
     border-radius: 10px;
-    padding: 8px 14px;
-    margin-top: 2px;
+    padding: 9px 14px;
+    margin-top: 4px;
   }
 
   .fact-box-title {
-    font-size: 13.5px;
+    font-size: 15.5px;
     font-weight: 700;
     color: #065f46;
     margin-bottom: 4px;
@@ -641,9 +641,9 @@ style: |
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 13px;
+    font-size: 15px;
     color: #064e3b;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
   .slide-qa-box {
@@ -651,12 +651,12 @@ style: |
     border: 1.5px solid #cbd5e1;
     border-left: 4px solid #0284c7;
     border-radius: 9px;
-    padding: 7px 12px;
+    padding: 8px 13px;
     margin-top: 7px;
   }
 
   .slide-qa-question {
-    font-size: 13.5px;
+    font-size: 15px;
     font-weight: 700;
     color: #0f172a;
     line-height: 1.35;
@@ -664,10 +664,62 @@ style: |
   }
 
   .slide-qa-answer {
-    font-size: 13px;
+    font-size: 14.5px;
     font-weight: 700;
     color: #047857;
     line-height: 1.35;
+  }
+
+  .full-content .main-title {
+    font-size: 34px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+  }
+
+  .full-content .sub-title {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .full-content .description {
+    font-size: 18.5px;
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  .full-content .fact-box {
+    padding: 12px 18px;
+    margin-top: 8px;
+  }
+
+  .full-content .fact-box-title {
+    font-size: 17.5px;
+    margin-bottom: 5px;
+  }
+
+  .full-content .fact-list {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .full-content .fact-list li {
+    margin-bottom: 5px;
+  }
+
+  .full-content .slide-qa-box {
+    padding: 10px 18px;
+    margin-top: 10px;
+  }
+
+  .full-content .slide-qa-question {
+    font-size: 17px;
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .full-content .slide-qa-answer {
+    font-size: 16.5px;
+    line-height: 1.4;
   }
 
   .fact-list li {
@@ -752,21 +804,21 @@ style: |
       md += `  <div class="full-content">\n`;
       md += `    <div>\n`;
       md += `      <div class="category-tag">${catUpper} AFFAIRS</div>\n`;
-      md += `      <div class="main-title" style="font-size: 32px;">${story.title}</div>\n`;
-      md += `      <div class="sub-title" style="font-size: 21px;">${story.subTitle}</div>\n`;
-      md += `      <div class="description" style="font-size: 16px; line-height: 1.6; max-width: 95%;">${story.description}</div>\n`;
+      md += `      <div class="main-title">${story.title}</div>\n`;
+      md += `      <div class="sub-title">${story.subTitle}</div>\n`;
+      md += `      <div class="description">${story.description}</div>\n`;
       md += `    </div>\n`;
-      md += `    <div class="fact-box" style="margin-top: 10px;">\n`;
-      md += `      <div class="fact-box-title" style="font-size: 15px;">⚓ പ്രധാന വസ്തുതകൾ & പരീക്ഷാ പോയിന്റുകൾ</div>\n`;
-      md += `      <ul class="fact-list" style="font-size: 14.5px;">\n`;
+      md += `    <div class="fact-box">\n`;
+      md += `      <div class="fact-box-title">⚓ പ്രധാന വസ്തുതകൾ & പരീക്ഷാ പോയിന്റുകൾ</div>\n`;
+      md += `      <ul class="fact-list">\n`;
       examPoints.forEach(pt => {
         md += `        <li>${pt}</li>\n`;
       });
       md += `      </ul>\n`;
       md += `    </div>\n`;
-      md += `    <div class="slide-qa-box" style="margin-top: 12px; padding: 10px 16px;">\n`;
-      md += `      <div class="slide-qa-question" style="font-size: 15px;">❓ <strong>ചോദ്യം:</strong> ${story.question}</div>\n`;
-      md += `      <div class="slide-qa-answer" style="font-size: 14.5px;">✅ <strong>ഉത്തരം:</strong> ${story.answer}</div>\n`;
+      md += `    <div class="slide-qa-box">\n`;
+      md += `      <div class="slide-qa-question">❓ <strong>ചോദ്യം:</strong> ${story.question}</div>\n`;
+      md += `      <div class="slide-qa-answer">✅ <strong>ഉത്തരം:</strong> ${story.answer}</div>\n`;
       md += `    </div>\n`;
       md += `  </div>\n`;
       md += `</div>\n\n`;
@@ -782,19 +834,19 @@ style: |
     md += `      <div class="category-tag">📚 DAILY VOCABULARY</div>\n`;
     md += `      <div class="main-title">ദിനപത്രത്തിൽ നിന്നുള്ള 2 പ്രധാന പദങ്ങൾ</div>\n`;
     md += `    </div>\n`;
-    md += `    <div style="display: flex; gap: 24px; margin-top: 18px;">\n`;
+    md += `    <div style="display: flex; flex-direction: row; gap: 20px; margin-top: 14px; width: 100%; box-sizing: border-box;">\n`;
     vocabulary.forEach((v, idx) => {
-      md += `      <div class="vocab-card" style="flex: 1;">\n`;
-      md += `        <div style="font-size: 24px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px;">${idx + 1}. ${(v.word || '').toUpperCase()} <span style="font-size: 15px; color: #64748b; font-weight: normal;">(${v.partOfSpeech || 'n.'})</span></div>\n`;
-      md += `        <div style="font-size: 16px; margin-bottom: 8px;"><strong>English:</strong> ${v.englishMeaning}</div>\n`;
-      md += `        <div style="font-size: 16px; color: #059669; font-weight: 700; margin-bottom: 10px;"><strong>മലയാളം:</strong> ${v.malayalamMeaning}</div>\n`;
-      md += `        <div style="font-size: 15px; color: #334155; line-height: 1.5;"><strong>Example:</strong> <em>"${v.exampleSentence || ''}"</em></div>\n`;
+      md += `      <div class="vocab-card" style="flex: 1; min-width: 0; padding: 14px 18px;">\n`;
+      md += `        <div style="font-size: 22px; font-weight: 800; color: #1e3a8a; margin-bottom: 6px;">${idx + 1}. ${(v.word || '').toUpperCase()} <span style="font-size: 14px; color: #64748b; font-weight: normal;">(${v.partOfSpeech || 'n.'})</span></div>\n`;
+      md += `        <div style="font-size: 15.5px; margin-bottom: 6px;"><strong>English:</strong> ${v.englishMeaning}</div>\n`;
+      md += `        <div style="font-size: 15.5px; color: #059669; font-weight: 700; margin-bottom: 8px;"><strong>മലയാളം:</strong> ${v.malayalamMeaning}</div>\n`;
+      md += `        <div style="font-size: 14.5px; color: #334155; line-height: 1.45;"><strong>Example:</strong> <em>"${v.exampleSentence || ''}"</em></div>\n`;
       md += `      </div>\n`;
     });
     md += `    </div>\n`;
-    md += `    <div class="fact-box" style="margin-top: 20px;">\n`;
-    md += `      <div class="fact-box-title">💡 പരീക്ഷാ ടിപ്പ്</div>\n`;
-    md += `      <div style="font-size: 14px; color: #064e3b;">കഴിഞ്ഞ മത്സരപരീക്ഷകളിൽ ആവർത്തിച്ചു ചോദിച്ച പ്രധാന ഇംഗ്ലീഷ് പദങ്ങളും അവയുടെ പ്രയോഗവുമാണ് ഇവിടെ നൽകിയിരിക്കുന്നത്.</div>\n`;
+    md += `    <div class="fact-box" style="margin-top: 14px; padding: 10px 16px;">\n`;
+    md += `      <div class="fact-box-title" style="font-size: 15px; margin-bottom: 4px;">💡 പരീക്ഷാ ടിപ്പ്</div>\n`;
+    md += `      <div style="font-size: 14.5px; color: #064e3b; line-height: 1.4;">കഴിഞ്ഞ മത്സരപരീക്ഷകളിൽ ആവർത്തിച്ചു ചോദിച്ച പ്രധാന ഇംഗ്ലീഷ് പദങ്ങളും അവയുടെ പ്രയോഗവുമാണ് ഇവിടെ നൽകിയിരിക്കുന്നത്.</div>\n`;
     md += `    </div>\n`;
     md += `  </div>\n`;
     md += `</div>\n`;
@@ -806,7 +858,7 @@ style: |
 
   console.log("📄 [5/6] Compiling 16:9 Presentation PDF...");
   const pdfPath = path.join(__dirname, `../reports/Daily_Current_Affairs_${fileDate}_Presentation.pdf`);
-  execSync(`npx -y @marp-team/marp-cli "${reportPath}" --pdf --allow-local-files --no-stdin -o "${pdfPath}"`, { stdio: 'inherit' });
+  execSync(`npx -y @marp-team/marp-cli "${reportPath}" --html --pdf --allow-local-files --no-stdin -o "${pdfPath}"`, { stdio: 'inherit' });
 
   // Generate 9:16 Instagram Reel / YouTube Shorts Promo Slide
   console.log("📱 [6/6] Assembling & Compiling 9:16 Reel / Shorts Slide...");
